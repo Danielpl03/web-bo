@@ -1,0 +1,49 @@
+<!-- <footer class="footer">
+    <div class="footer-container">
+        <div class="about">
+            <img src="logo-radius.png" alt="Logo">
+            <p><span>M</span>EJORES PRECIOS <span>& L</span>IDERZAGO MERCANTIL GENERANDO <span>SOLUCIONES</span></p>
+        </div>
+        
+        <div class="contacto">
+            <p class="titulo">Contáctanos</p>
+            <div class="contacto-items">
+                <a href="{{wspLink}}" class="contacto-item"><img src="whatsapp.png" alt="WhatsApp-logo" ></a>
+                <a href="{{faceGroupLink}}" class="contacto-item"><img src="facebook.png" alt="Facebook-logo" ></a>
+                
+            </div>
+            <p>Siempre en Línea</p>
+            <div class="iconos-contacto">
+            </div>
+        </div>
+    </div>
+    <div class="firma">
+        <p>M&L SOLUCIONES 2024</p>
+        <p>TODOS LOS DERECHOS RESERVADOS</p>
+    </div>
+</footer> -->
+
+
+<footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="logo-section">
+          <img src="/logo-radius.png" alt="Logo ML SOLUCIONES" class="footer-logo">
+          <p><span>M</span>EJORES PRECIOS <span>& L</span>IDERZAGO MERCANTIL GENERANDO <span>SOLUCIONES</span></p>
+        </div>
+        <div class="contact-buttons">
+          <button (click)="openWhatsApp()" class="contact-button whatsapp" aria-label="Contactar por WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+            WhatsApp
+          </button>
+          <button (click)="openFacebook()" class="contact-button facebook" aria-label="Visitar página de Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            Facebook
+          </button>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; {{ getCurrentYear() }} M&L SOLUCIONES. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>

@@ -1,0 +1,20 @@
+<section class="productos-showcase">
+  <div class="container">
+    <div class="card">
+      <div class="card-header" (click)="toggleExpanded()">
+        <h2>{{ titulo }}</h2>
+        <button [attr.aria-expanded]="isExpanded"
+          [attr.aria-label]="isExpanded ? 'Ocultar lista de productos' : 'Mostrar lista de productos'">
+          <span class="chevron" [class.up]="isExpanded"></span>
+        </button>
+      </div>
+      <div class="card-content" *ngIf="isExpanded">
+        <div class="productos-grid">
+          <app-tarjeta-producto *ngFor="let producto of productos" [producto]="producto">
+          </app-tarjeta-producto>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

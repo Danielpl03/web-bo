@@ -1,0 +1,28 @@
+@if (tieneStock()) {
+  <div class="producto">
+    <img [src]="getImage()" [alt]="fullDescription()" (error)="handleImageError($event)" class="producto-image">
+    <h3>{{ fullDescription() }}</h3>
+    
+    <!-- Mostrar precio original y descuento si el producto tiene descuento en la moneda actual -->
+    @if (tieneDescuentoActivo()) {
+      <p class="precio-original">
+        <del>${{ precioOriginal() }}</del>
+      </p>
+      <p class="descuento">
+        {{ porcentajeDescuento() }}% de descuento
+      </p>
+      <p class="precio con-descuento">
+        ${{ precio() }}
+      </p>
+    } @else {
+      <p class="precio">
+        ${{ precio() }}
+      </p>
+    }
+    
+    <button (click)="agregarACarrito()" class="btn-agregar-carrito">
+      Añadir al carrito
+    </button>
+  </div>
+  }
+  

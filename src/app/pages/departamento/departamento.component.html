@@ -1,0 +1,70 @@
+<!-- <div class="departamento-container">
+    <div class="titulo-moneda">
+        <h1>{{departamento?.nombre}}</h1>
+    </div>
+    @if (categorias()) {
+    <ul class="categoria">
+        <span class="title-busqueda">Categorías</span>
+        @for (cat of categorias(); track $index) {
+        <app-tarjeta-categoria [categoria]="cat"></app-tarjeta-categoria>
+
+        }
+    </ul>
+    }
+
+    <span class="title-busqueda">Productos</span>
+    <div class="productos-grid">
+        @for (producto of productos(); track $index) {
+        @defer (on viewport) {
+
+        @if (!producto.idCategoria) {
+        <app-tarjeta-producto [producto]="producto"></app-tarjeta-producto>
+        }
+        }@placeholder{
+        <app-loading [titulo]="'Cargando...'"></app-loading>
+        }@error {
+        <p>ERROR AL CARGAR!. INTENTE RECARGAR LA PÁGINA</p>
+        }
+        }
+    </div>
+    <a [routerLink]="[ '/departamentos']">Atrás</a>
+</div> -->
+
+
+@defer ( when !loading()) {
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ departamento?.nombre }}</h2>
+        </div>
+        @if (categorias() && getItems(categorias())) {
+        <div class="card-header">
+            <h2>Categorías</h2>
+        </div>
+        <ul>
+            @for (cat of categorias(); track $index) {
+            <app-tarjeta-categoria [categoria]="cat"></app-tarjeta-categoria>
+            }
+        </ul>
+        }
+
+        <div class="card-content">
+            <div class="card-header">
+                <h2>Otros Productos</h2>
+            </div>
+            <div class="productos-grid">
+                @for (producto of productos(); track $index) {
+                @if (!producto.idCategoria) {
+                <app-tarjeta-producto [producto]="producto"></app-tarjeta-producto>
+                }
+                }
+            </div>
+        </div>
+        <a [routerLink]="[ '/departamentos']">Atrás</a>
+    </div>
+</div>
+}@placeholder {
+<app-loading [titulo]="'Cargando...'"></app-loading>
+}@error {
+<p>ERROR AL CARGAR!. INTENTE RECARGAR LA PÁGINA</p>
+}

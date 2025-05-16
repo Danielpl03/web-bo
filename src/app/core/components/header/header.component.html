@@ -1,0 +1,48 @@
+<!-- <header class="header-container">
+    <div id="cont-logo" [routerLink]="[ 'departamentos' ]">
+        <img class="image" src="logo-radius.png" alt="logo_ML">
+    </div>
+    <form #buscarForm="ngForm" (change)="buscar()">
+        <div class="container-busqueda">
+            <button type="submit"><img class="icon" src="lupa.svg" alt="fav"></button>
+
+            <input type="text" name="texto" [(ngModel)]="busqueda.texto" placeholder="Buscar...">
+        </div>
+    </form>
+    <div [routerLink]="[ 'carrito' ]">
+        <img class="cart-Icon" src="cart.svg" alt="Carrito">
+    </div>
+     <p>{{busqueda.deacripcion}}</p> 
+ </header> -->
+
+
+
+<header class="header">
+    <div class="container">
+        <div class="logo">
+
+            <img [routerLink]="[ 'departamentos' ]" src="/logo-radius.png" alt="Logo de M&L SOLUCIONES" width="100"
+                height="50">
+        </div>
+        <div class="search-bar">
+            <form #buscarForm="ngForm" (change)="buscar()" class="search-form" >
+
+                <input type="text" placeholder="Buscar productos..." name="texto" [(ngModel)]="busqueda().texto"
+                    (keyup.enter)="buscar()" aria-label="Buscar productos">
+                <button (click)="buscar()" aria-label="Buscar">
+                    🔍
+                </button>
+            </form>
+            <div class="cart-button">
+                <button [routerLink]="[ 'carrito' ]" aria-label="Ver carrito">
+                    🛒
+                    <span class="cart-count">
+                        {{ carritoService.items }}
+                    </span>
+                </button>
+            </div>
+        </div>
+        
+    </div>
+    <app-elegir-moneda ></app-elegir-moneda>
+</header>

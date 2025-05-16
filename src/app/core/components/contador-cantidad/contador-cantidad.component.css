@@ -1,0 +1,24 @@
+.container-contador{
+    display: flex;
+    align-items: flex-end;
+}
+
+button{
+    display: flex;
+    font-size: medium;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    justify-content: center;
+    align-items: center; 
+    border-radius: 5px;
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.678);
+}
+
+span{
+    padding: 0 2px;
+    font-size: larger;
+
+}

@@ -1,0 +1,67 @@
+<div class="container-carrito">
+    @if (!carritoService.isEmpty()) {
+    <div class="container-title-moneda">
+        <h2>Carrito de Compras</h2>
+    </div>
+
+    <div class="container-items">
+        @for (item of carritoService.getItems(); track $index) {
+        <div class="item">
+
+            <img src="{{getImage(item.producto)}}" alt="{{item.producto.descripcion}}" (error)="handleImageError($event)" class="img-producto">
+            <div class="detalles">
+                <h4>{{item.producto.descripcion}}<span *ngIf="item.producto.codigo"> -{{item.producto.codigo}}</span>
+                </h4>
+                <button class="papelera-button" (click)="carritoService.eliminarDeCarrito(item.producto, 0)"><img
+                        class="papelera-icon" src="papelera.svg" alt="Papelera"></button>
+                <div class="content">
+                    <div class="precios">
+                        <!-- Mostrar precio original y descuento si el producto tiene descuento en la moneda actual -->
+                        @if (productsService.productoTieneDescuento(item.producto, carritoService.moneda()?.idMoneda || 1)) {
+                            <div class="precios-descuento">
+                                <p class="precio-original">
+                                    <del>${{ productsService.getPrecio(false, item.producto) }}</del>
+                                </p>
+                                <p class="descuento">
+                                    {{ getDescuentoPorcentaje(item.producto) }}%
+                                </p>
+                            </div>
+                        }
+                        <p class="precio-con-descuento">
+                            ${{ productsService.getPrecio(true, item.producto) }}
+                        </p>
+                    </div>
+                    <app-contador-cantidad [cantidadInicial]="item.cantidad"
+                        (cantidad)="carritoService.agregarACarrito(item.producto, $event)"></app-contador-cantidad>
+                    <p>${{item.importe}}</p>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    <hr>
+    <div class="footer-cart">
+        @if (carritoService.tieneDescuento()) {
+        <div class="subtotal">
+            <p>Subtotal:</p>
+            <p>${{carritoService.getImporte(false)}}</p>
+        </div>
+        <div class="importe-descuento descuento-grande">
+            <p>Descuento:</p>
+            <p>-${{carritoService.getAhorroTotal()}}</p>
+        </div>
+        }
+        <div class="total">
+            <p>Total:</p>
+            <p>${{carritoService.getImporte(true)}}</p>
+        </div>
+    </div>
+    <Hr>
+    <button class="btn-pedido" (click)="enviarPedido()">Enviar Pedido</button>
+
+    }@else {
+    <p class="vacio">Su carrito está vacío!
+    </p>
+    }
+    <a [routerLink]="[ '/departamentos']">Seguir Comprando</a>
+</div>

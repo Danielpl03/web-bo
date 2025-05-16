@@ -1,0 +1,189 @@
+.container-carrito {
+  width: 90%;
+  margin: 0 auto;
+  max-width: 550px;
+}
+
+.container-title-moneda{
+  display: flex;
+  justify-content: space-around;
+    align-items: center;
+}
+
+h2 {
+  color: white;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  font-size: x-large;
+  text-align: center;
+}
+
+.container-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.item {
+  height: 110px;
+  display: flex;
+  background-color: #373737;
+  border-radius: 10px;
+  overflow: hidden;
+  color: white;
+  font-size: large;
+}
+
+h4 {
+  /* font-weight: bold; */
+  text-align: center;
+  text-transform: uppercase;
+  color: white;
+  font-size: large;
+}
+
+.img-producto {
+  height: 100%;
+  flex: 1.5;
+  width: 25%;
+  background-size: cover;
+}
+
+.detalles {
+  display: flex;
+  flex: 3.5;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+hr {
+  margin: 0 auto;
+}
+
+.footer-cart {
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  justify-content: space-between;
+  padding: 10px;
+  align-items: center;
+  color: white;
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.papelera-button{
+    display: flex;
+    align-self: flex-end;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: white;
+    border-radius: 50%;
+    margin: 0;
+}
+
+.papelera-icon{
+    width: 80%;
+    height: 80%;
+    /* align-self: flex-start; */
+}
+
+.vacio{
+    width: 100%;
+    font-size: x-large;
+    color: white;
+    text-align: center;
+    
+}
+
+a{
+    width: 100px;
+    text-decoration: none;
+    text-align: center;
+    background-color: white;
+    color: black;
+    padding: 5px;
+    display: block; 
+    border-radius: 5px;
+    margin: 20px auto;
+    font-size: larger;
+}
+
+.btn-pedido{
+    margin-top: 10px;
+    border-radius: 10px;
+    font-size: larger;
+    cursor: pointer;
+}
+
+.precios{
+  display: flex;
+  flex-direction: column;
+}
+
+.precio {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.precio-con-descuento {
+  color: #ffffff;
+  text-align: center;
+}
+
+.precio-original {
+  font-size: 0.875rem;
+  color: #999;
+  margin: 0.25rem 0;
+}
+
+.precios-descuento{
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+.descuento {
+  font-size: .8rem;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.descuento-grande {
+  font-size: 1.2rem;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.subtotal{
+  display: flex;
+  width: -webkit-fill-available;
+  justify-content: space-between;
+}
+
+.importe-descuento{
+  display: flex;
+  width: -webkit-fill-available;
+  justify-content: space-between;
+}
+
+.total{
+  display: flex;
+  width: -webkit-fill-available;
+  justify-content: space-between;
+}

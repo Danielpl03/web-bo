@@ -1,0 +1,6 @@
+<div class="container-contador">
+    <button [disabled]="numero()<=1"  (click)="actualizarNumero(-1)">-</button>
+    <span>{{numero()}}</span>
+    <button (click)="actualizarNumero(1)">+</button>
+
+</div>

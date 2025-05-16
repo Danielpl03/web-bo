@@ -1,0 +1,46 @@
+<!-- @defer ( on interaction ) { -->
+
+<!-- <li class="categoria-list">
+    <div class="categoria-link">
+        <label for="{{categoria.idCategoria}}" class="categoria-label">{{categoria.nombre}}</label>
+        <input type="checkbox" class="categoria-check" id="{{categoria.idCategoria}}">
+
+        <label for="{{categoria.idCategoria}}" class="categoria-cantidad">
+            <img src="icon.svg" alt="Icono flecha" class="flecha">
+            <span>{{cantidad()}}</span></label>
+    </div>
+    <div class="categoria-content">
+        <ul class="categoria-items">
+            @for (producto of productos(); track $index) {
+            <li class="categoria-item">
+                <app-tarjeta-producto [producto]="producto"> </app-tarjeta-producto>
+            </li>
+            }
+        </ul>
+    </div>
+</li> -->
+
+@if (cantidad()>0) {
+    <section class="productos-showcase">
+        <div class="container">
+            <div class="card">
+                <div class="card-header" (click)="toggleExpanded()">
+                    <h2>{{ categoria.nombre }}</h2>
+                    <button [attr.aria-expanded]="isExpanded"
+                        [attr.aria-label]="isExpanded ? 'Ocultar lista de productos' : 'Mostrar lista de productos'">
+                        <span class="chevron" [class.up]="isExpanded"></span>
+                    </button>
+                </div>
+                <div class="card-content" *ngIf="isExpanded">
+                    <div class="productos-grid">
+                        @for (producto of productos(); track $index) {
+                        <app-tarjeta-producto [producto]="producto">
+                        </app-tarjeta-producto>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+}

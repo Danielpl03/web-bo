@@ -1,0 +1,51 @@
+@if (searchCompleted()) {
+<div class="buscar-container">
+    <div class="buscar-moneda">
+        <h1>Resultados</h1>
+        <app-elegir-moneda  ></app-elegir-moneda>
+    </div>
+    @if (busquedaResult()!.departamentos!.length>0) {
+    <p class="title-busqueda">Departamentos</p>
+    <div class="buscar-departamentos">
+        @for (departamento of busquedaResult()?.departamentos; track $index) {
+        <app-tarjeta-departamento [departamento]="departamento"
+            [routerLink]="[ '/departamentos', departamento.idDepartamento]">
+        </app-tarjeta-departamento>
+        }
+    </div>
+    }
+    @if (busquedaResult()?.categorias!.length>0) {
+    <div class="buscar-categorias">
+        <p class="title-busqueda">Categorías</p>
+        <ul class="categoria">
+            @for (cat of busquedaResult()?.categorias; track $index) {
+            <app-tarjeta-categoria [categoria]="cat"></app-tarjeta-categoria>
+            <hr>
+            }
+        </ul>
+    </div>
+    }
+    @if (busquedaResult()?.productos!.length>0) {
+    <div class="buscar-productos">
+        <p class="title-busqueda">Productos</p>
+        <div class="producto-container">
+            @for (producto of busquedaResult()?.productos; track $index) {
+            <app-tarjeta-producto [producto]="producto"></app-tarjeta-producto>
+
+            }
+        </div>
+    </div>
+    }
+    @if (emptyResult()) {
+        
+            
+            <div class="sin-resultados">
+                <p>Lo sentimos, no hay resultados para tu búsqueda</p>
+            </div>
+           
+        }
+    
+</div>
+}@else {
+    <app-loading [titulo]="'Preparando resultados para tu búsqueda'"></app-loading>
+}

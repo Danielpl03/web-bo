@@ -1,0 +1,185 @@
+/* .footer{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(79 79 79 / 80%);
+    align-self: self-end;
+}
+
+.footer-container{
+    display: flex;
+    color: white;
+    font-size: smaller;
+    padding: 10px;
+    padding-bottom: 5px;
+}
+
+img{
+    max-width: 100%;
+    margin-bottom: 5px;
+}
+
+.about{
+    flex: 2;
+    display: flex;
+    flex-direction: column; 
+
+    text-align: center;
+}
+.about span{
+    color: red;
+}
+
+.direccion{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}   
+
+.contacto{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 0 5px;
+    text-align: center;
+    .titulo{
+        font-size: larger;
+        cursor: default;
+    }
+    p{
+        font-size: smaller;
+        cursor: default;
+    }
+}
+
+.firma{
+    display: flex;
+    justify-content: space-around;
+    color: white;
+    font-size: x-small;
+    background-color: rgba(0, 0, 0, 0.479);
+    padding: 5px;
+}
+
+.contacto-items{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+}
+
+.contacto-item{
+    cursor: pointer;
+    overflow: hidden;
+
+    img{
+        border-radius: 50%;
+        margin: 0;
+        padding: 0;
+        height: 80%;
+        max-width: 80%;
+        
+    }
+} */
+
+
+.footer {
+    background-color: rgb(79 79 79 / 80%);
+    padding: .5rem 0;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .logo-section {
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    span{
+        color: red;
+    }
+  }
+  
+  .footer-logo {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 0.5rem;
+  }
+  
+  .company-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .contact-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: .4rem;
+  }
+  
+  .contact-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .contact-button svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .whatsapp {
+    background-color: #25D366;
+    color: white;
+  }
+  
+  .whatsapp:hover {
+    background-color: #128C7E;
+  }
+  
+  .facebook {
+    background-color: #1877F2;
+    color: white;
+  }
+  
+  .facebook:hover {
+    background-color: #0E5A9E;
+  }
+  
+  .copyright {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: white;
+  }
+  
+  @media (min-width: 768px) {
+    .footer-content {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  
+  
+    .contact-buttons {
+        flex-direction: column;
+      /* justify-content: flex-end; */
+    }
+  }

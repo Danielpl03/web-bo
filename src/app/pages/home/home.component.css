@@ -1,0 +1,163 @@
+#dptos-cantainer {
+  margin: 10px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  justify-items: center;
+  gap: 20px;
+}
+
+.title-busqueda {
+  color: white;
+  text-align: center;
+  padding: 5px;
+  margin-top: 10px;
+  font-size: larger;
+}
+
+.tiendas-showcase {
+  padding: 1rem;
+  /* background-color: #f9f9f9; */
+}
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.86);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .8rem;
+  cursor: pointer;
+}
+
+.card-header h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.card-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.chevron {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #666;
+  border-bottom: 2px solid #666;
+  transform: rotate(45deg);
+  transition: transform 0.3s;
+}
+
+.chevron.up {
+  transform: rotate(-135deg);
+}
+
+.card-content {
+  padding: 0.5rem;
+  border-top: 1px solid #eee;
+}
+
+.tienda {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  justify-content: flex-start;
+}
+
+.tienda:last-child {
+  margin-bottom: 0;
+}
+
+.tienda img {
+  width: 80px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  /* margin-bottom: 0.5rem; */
+}
+
+.tienda-info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.tienda-info h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.tienda-info p {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+}
+
+.direccion-link {
+  color: #07519b;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.direccion-link:hover {
+  text-decoration: underline;
+}
+
+.direccion-link:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  #dptos-cantainer {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tiendas-showcase {
+    padding: 2rem;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .tienda {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .tienda img {
+    margin-right: 1rem;
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  #dptos-cantainer {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .container {
+    max-width: 1200px;
+  }
+}

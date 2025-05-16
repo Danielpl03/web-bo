@@ -1,0 +1,50 @@
+@defer () {
+    <section class="tiendas-showcase">
+        <div class="container">
+            <div class="card">
+                <div class="card-header" (click)="toggleExpanded()">
+                    <h2>Nuestras Tiendas</h2>
+                    <button [attr.aria-expanded]="isExpanded"
+                        [attr.aria-label]="isExpanded ? 'Ocultar información de tiendas' : 'Mostrar información de tiendas'">
+                        <span class="chevron" [class.up]="isExpanded"></span>
+                    </button>
+                </div>
+                <div class="card-content" *ngIf="isExpanded">
+                    <div class="tienda" *ngFor="let tienda of tiendas">
+                        <img [src]="'/'+tienda.imageName" [alt]="'Logo de ' + tienda.nombre">
+                        <div class="tienda-info">
+                            <h3>{{ tienda.nombre }}</h3>
+                            <p>
+                                <a href="javascript:void(0);" (click)="abrirEnMaps(tienda.coordenadas)"
+                                    class="direccion-link" [attr.aria-label]="'Ver ' + tienda.nombre + ' en Google Maps'">
+                                    {{ tienda.direccion }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="tiendas-showcase">
+        <h1 class="title-busqueda">Departamentos</h1>
+        
+        <div *ngIf="hasError()" class="error-container">
+            <p>{{ errorMessage() }}</p>
+            <button (click)="retryLoading()" class="retry-button">Intentar de nuevo</button>
+        </div>
+        
+        <div id="dptos-cantainer" *ngIf="!hasError() && departamentos().length > 0">
+            <app-tarjeta-departamento *ngFor="let dpto of departamentos()" [departamento]="dpto"
+                [routerLink]="[ '/departamentos', dpto.idDepartamento]">
+            </app-tarjeta-departamento>
+        </div>
+        
+        <div *ngIf="!hasError() && !isLoading() && departamentos().length === 0" class="empty-state">
+            <p>No hay departamentos disponibles en este momento.</p>
+        </div>
+    </section>
+    }@placeholder {
+    <app-loading [titulo]="'Cargando Departamentos'"></app-loading>
+    }

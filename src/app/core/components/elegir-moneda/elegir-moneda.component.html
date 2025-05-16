@@ -1,0 +1,25 @@
+<!-- <div class="monedas-container">
+    <label for="moneda" class="moneda">
+        <button (click)="cambiarMoneda()" class="moneda-check" id="moneda">
+            <span>{{moneda()?.siglas}} <span class="emoji">🔃</span></span>
+        </button>
+    </label>
+</div> -->
+
+
+<div class="selector-moneda">
+    <button 
+      (click)="cambiarMoneda()" 
+      [class.active]="moneda()?.idMoneda === 1"
+      [attr.aria-label]="'Cambiar a Peso Cubano'"
+    >
+      CUP
+    </button>
+    <button 
+      (click)="cambiarMoneda()" 
+      [class.active]="moneda()?.idMoneda === 2"
+      aria-label="Cambiar a Dólares"
+    >
+      USD
+    </button>
+  </div>

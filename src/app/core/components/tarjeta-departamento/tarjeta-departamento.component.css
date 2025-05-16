@@ -1,0 +1,20 @@
+div{
+    width: 100%;
+    height: 150px;
+    display: flex;
+    background-size: cover;
+    justify-content: center;
+    align-items: flex-end;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+h3{
+    width: 100%;
+    font-size: small;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    background-color: rgba(255, 255, 255, 0.86);
+}

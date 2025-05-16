@@ -1,0 +1,77 @@
+/* .moneda {
+  display: flex;
+  align-items: center;
+}
+
+span{
+    color: white;
+    font-size: medium;
+}
+
+.btn-moneda {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  color: white;
+  border: none;
+}
+
+.flecha {
+  width: 15px;
+}
+
+.moneda-check {
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+} */
+
+
+.selector-moneda {
+  position: fixed;
+  top: 110px;
+  width: 4rem;
+  right: 0;
+  /* background-color: #f8f9fa; */
+  /* padding: 0.5rem; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1000;
+  /* box-shadow: 0 2px 4px #404041; */
+}
+
+.selector-moneda button {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  color: #495057;
+  padding: 0.2rem 0.3rem;
+  /* margin: 0 0.25rem; */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.selector-moneda button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.selector-moneda button:hover:not(.active) {
+  background-color: #dee2e6;
+}
+
+@media (min-width: 768px) {
+  .selector-moneda {
+    padding: 0.75rem;
+  }
+
+  .selector-moneda button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+}
+

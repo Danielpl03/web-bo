@@ -1,0 +1,41 @@
+.dialog {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  padding: 5px;
+  background-color: rgb(79 79 79);
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  color: white;
+  border-radius: 10px;
+  margin: 0 auto;
+}
+
+p {
+  text-align: justify;
+  font-size: large;
+}
+
+.close {
+  width: 5px;
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  padding-right: 15px;
+  font-size: larger;
+  color: white;
+}
+
+.float-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: x-large;
+}

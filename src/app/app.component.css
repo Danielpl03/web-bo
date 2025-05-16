@@ -1,0 +1,10 @@
+#router {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  app-header {
+    position: relative;
+    z-index: 10;
+  }

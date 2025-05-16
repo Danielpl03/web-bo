@@ -1,0 +1,33 @@
+form{
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-size: large;
+    gap: 20px;
+    div{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    input{
+        border-radius: 5px;
+        height: 20px
+    }
+
+}
+
+button{
+    height: 40px;
+    font-size: large;
+    font-weight: bold;
+    background-color: green;
+    border: 1px solid black;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+button:disabled{
+    background-color: aquamarine;
+}
