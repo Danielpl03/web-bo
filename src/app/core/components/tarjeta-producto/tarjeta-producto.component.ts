@@ -75,7 +75,7 @@ export class TarjetaProductoComponent {
 
   informacion() {
     const mensaje = `
-Hola!, quisiera más información acerca de ${this.fullDescription()}. Muchas gracias!
+Hola, quisiera más información acerca de ${this.fullDescription()}. Muchas gracias!
 `
     const link = `${WSP_LINK}?text=${encodeURI(mensaje)}`
     window.open(link, "_blank")
