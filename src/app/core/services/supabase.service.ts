@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core"
-import { createClient, Pagination, type SupabaseClient } from "@supabase/supabase-js"
+import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import { environment } from "../../environments/environment"
 
 // Definir interfaces para los tipos de consulta
@@ -69,7 +69,6 @@ export class SupabaseService {
     }
     return allData;
   }
-
 
   /**
    * Obtener datos de una tabla

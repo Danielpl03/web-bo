@@ -1,105 +1,202 @@
 .carrusel-container {
-    /* margin: 2rem 0; */
-    padding: 1rem;
-    background-color: rgba(255, 255, 255, 0.86);
-    border-radius: 8px;
-  }
-  
-  .carrusel-container h2 {
-    text-align: center;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    color: #333;
-  }
-  
-  .carrusel {
-    position: relative;
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
+  margin: 0.8rem 0;
+  padding: 0.8rem;
+  background-color: rgba(255, 255, 255, 0.86);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.carrusel-container h2 {
+  text-align: center;
+  margin-bottom: 0.8rem;
+  font-size: 1.3rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.carrusel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.carrusel-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  position: relative;
+}
+
+.producto-banner {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  z-index: 5;
+}
+
+.producto-banner.destacado {
+  background-color: #007bff;
+  color: white;
+}
+
+.producto-banner.rebaja {
+  background-color: #e53935;
+  color: white;
+}
+
+.carrusel-image {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.carrusel-content {
+  margin-top: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.carrusel-content h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+  /* Limitar a 2 líneas y añadir elipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 2.8rem;
+}
+
+.carrusel-content p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+
+}
+
+.precio-container {
+  margin: 0.5rem 0;
+}
+
+.carrusel-content .precio {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333; /* Color por defecto */
+}
+
+.precio-destacado  {
+  color: #007bff !important; /* Azul para productos destacados */
+}
+
+.precio-rebajado {
+  color: #e53935 !important; /* Rojo para productos rebajados */
+}
+
+
+
+.precio-original {
+  font-size: 0.9rem;
+  color: #999;
+  margin-bottom: 0.25rem;
+}
+
+.descuento {
+  font-size: 0.9rem;
+  color: #4caf50;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.descuento.rebaja {
+  color: #e53935;
+}
+
+.btn-agregar-carrito {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 0.5rem;
+  width: 100%;
+  max-width: 200px;
+  font-size: 0.875rem;
+}
+
+.btn-agregar-carrito:hover {
+  background-color: #0056b3;
+}
+
+.carrusel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 10;
+}
+
+.carrusel-control:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.carrusel-control.prev {
+  left: 10px;
+}
+
+.carrusel-control.next {
+  right: 10px;
+}
+
+.no-productos {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
+}
+
+@media (min-width: 768px) {
   .carrusel-slide {
-    display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    background-color: white;
   }
-  
+
   .carrusel-image {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
-    border-radius: 8px;
+    width: 45%;
+    height: 250px;
   }
-  
+
   .carrusel-content {
-    margin-top: 1rem;
-    text-align: center;
+    width: 50%;
+    text-align: left;
+    margin-top: 0;
   }
-  
-  .carrusel-content h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-    color: #333;
+
+  .btn-agregar-carrito {
+    margin-left: 0;
   }
-  
-  .carrusel-content p {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-  }
-  
-  .carrusel-content .precio {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #007bff;
-  }
-  
-  .carrusel-control {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(255, 255, 255, 0.7);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .carrusel-control:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-  }
-  
-  .carrusel-control.prev {
-    left: 10px;
-  }
-  
-  .carrusel-control.next {
-    right: 10px;
-  }
-  
-  @media (min-width: 768px) {
-    .carrusel-slide {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-  
-    .carrusel-image {
-      width: 50%;
-      height: 300px;
-    }
-  
-    .carrusel-content {
-      width: 45%;
-      text-align: left;
-      margin-top: 0;
-    }
-  }
+}

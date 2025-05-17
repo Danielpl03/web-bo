@@ -24,9 +24,8 @@ export class CarritoComponent {
   url: string = IMAGES_PRODUCTOS
 
   getImage(producto: Producto) {
-    
-      const image = producto.image_name!.replaceAll(" ", "_")
-      return this.url + image.replaceAll("&", "_")
+      const image = producto.image_name!
+      return this.url + image
   }
 
   fullDescription(producto: Producto) {

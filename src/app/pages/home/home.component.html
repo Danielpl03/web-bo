@@ -11,7 +11,7 @@
                 </div>
                 <div class="card-content" *ngIf="isExpanded">
                     <div class="tienda" *ngFor="let tienda of tiendas">
-                        <img [src]="'/'+tienda.imageName" [alt]="'Logo de ' + tienda.nombre">
+                        <img [src]="tienda.imageName" [alt]="'Logo de ' + tienda.nombre">
                         <div class="tienda-info">
                             <h3>{{ tienda.nombre }}</h3>
                             <p>
@@ -25,6 +25,16 @@
                 </div>
             </div>
         </div>
+    </section>
+    
+    <!-- Carrusel combinado de productos destacados y rebajados -->
+    <section class="productos-combinados" *ngIf="( (!productosDestacadosLoading() && !productosRebajadosLoading()) &&
+                                                ( productosDestacados().length > 0 || productosRebajados().length > 0) )">
+        <app-producto-carrusel 
+            [productosDestacados]="productosDestacados()" 
+            [productosRebajados]="productosRebajados()"
+            [titulo]="'Productos Destacados y Ofertas'">
+        </app-producto-carrusel>
     </section>
     
     <section class="tiendas-showcase">

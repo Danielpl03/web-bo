@@ -1,5 +1,5 @@
 import { Injectable, type WritableSignal, signal, inject } from "@angular/core"
-import type { Descuento, DescuentoPago, Moneda } from "../interfaces/producto"
+import type { Descuento, DescuentoPago, MetodoPago, Moneda } from "../interfaces/producto"
 import { SupabaseService } from "./supabase.service"
 import { CarritoService } from "./carrito.service"
 
@@ -11,6 +11,10 @@ export class MonedaService {
   monedas: Moneda[] = []
   descuentosPagos: DescuentoPago[] = []
   descuentos: Descuento[] = []
+  metodosPago: MetodoPago[] = []
+
+  // Mapa para almacenar los descuentos por moneda de forma persistente
+  private descuentosPorMoneda: Map<number, number[]> = new Map()
 
   constructor(private supabaseService: SupabaseService) {
     // Intentar cargar la moneda guardada
@@ -31,18 +35,25 @@ export class MonedaService {
 
   async inicializarDatos() {
     try {
-      // Cargar monedas, descuentos y relaciones en paralelo
-      const [monedas, descuentos, descuentosPagos] = await Promise.all([
+      // Cargar monedas, descuentos, métodos de pago y relaciones en paralelo
+      const [monedas, descuentos, metodosPago, descuentosPagos] = await Promise.all([
         this.getMonedas(),
         this.getDescuentos(),
+        this.getMetodosPago(),
         this.getDescuentosPagos(),
       ])
 
       this.monedas = monedas
       this.descuentos = descuentos
+      this.metodosPago = metodosPago
       this.descuentosPagos = descuentosPagos
 
-      // Asignar descuentos a cada moneda
+      console.log("Monedas cargadas:", this.monedas)
+      console.log("Métodos de pago cargados:", this.metodosPago)
+      console.log("Descuentos cargados:", this.descuentos)
+      console.log("Relaciones descuentos-pagos cargadas:", this.descuentosPagos)
+
+      // Asignar descuentos a cada moneda basado en sus métodos de pago
       this.asignarDescuentosAMonedas()
 
       // Establecer moneda por defecto si no hay una seleccionada
@@ -55,53 +66,72 @@ export class MonedaService {
           this.moneda.set(monedaActual)
         }
       }
+
+      console.log("Moneda actual con descuentos:", this.moneda())
     } catch (error) {
       console.error("Error al inicializar datos de monedas y descuentos:", error)
     }
   }
 
-  // Asignar descuentos a cada moneda basado en descuentos_pagos
   private asignarDescuentosAMonedas() {
+    // Limpiar el mapa de descuentos por moneda
+    this.descuentosPorMoneda.clear()
+
     for (const moneda of this.monedas) {
-      let idDesc: number[] = [];
-      for(const dp of this.descuentosPagos){
-        if(moneda.idMoneda == 1 && (dp.idPago == 1 || dp.idPago == 2)){
-          idDesc = [...idDesc, dp.idDescuento];
-        }else if (moneda.idMoneda == 2 && (dp.idPago == 3 || dp.idPago == 4) ) {
-          idDesc = [...idDesc, dp.idDescuento];
-        }
-      }
+      // Encontrar todos los métodos de pago para esta moneda
+      // Eliminar el filtro de activo ya que no existe esa columna
+      const metodosPagoMoneda = this.metodosPago.filter((mp) => mp.idMoneda === moneda.idMoneda)
 
-      // Encontrar todos los descuentos asociados a esta moneda
-      // const descuentosIds = this.descuentosPagos
-      //   .filter((dp) => (dp.idPago == 1 || dp.idPago == 2 && 1 == moneda.idMoneda) || (dp.idPago == 3 || dp.idPago == 4 && 2 == moneda.idMoneda) )
-      //   .map((dp) => dp.idDescuento)
+      console.log(`Métodos de pago para moneda ${moneda.nombre}:`, metodosPagoMoneda)
 
-      console.log(moneda, idDesc);
+      // Obtener IDs de los métodos de pago
+      const idsPagoMoneda = metodosPagoMoneda.map((mp) => mp.idPago)
+
+      // Encontrar todos los descuentos asociados a estos métodos de pago
+      const descuentosIds = this.descuentosPagos
+        .filter((dp) => idsPagoMoneda.includes(dp.idPago))
+        .map((dp) => dp.idDescuento)
+
+      console.log(`IDs de descuentos para moneda ${moneda.nombre}:`, descuentosIds)
 
       // Eliminar duplicados
-      moneda.descuentos = [...new Set(idDesc)]
+      const descuentosUnicos = [...new Set(descuentosIds)]
+
+      // Guardar en el mapa para acceso persistente
+      this.descuentosPorMoneda.set(moneda.idMoneda, descuentosUnicos)
+
+      // Asignar a la moneda
+      moneda.descuentos = descuentosUnicos
+
+      console.log(`Descuentos asignados a moneda ${moneda.nombre}:`, moneda.descuentos)
     }
-    console.log(this.monedas)
   }
 
-  // Verificar si una moneda tiene un descuento específico
   tieneDescuento(idMoneda: number, idDescuento: number): boolean {
-    console.log("tieneDescuento", idMoneda, idDescuento)
-    const moneda = this.monedas.find((m) => m.idMoneda === idMoneda)
-    return moneda?.descuentos?.includes(idDescuento) || false
+    // Usar el mapa para acceso persistente
+    const descuentosMoneda = this.descuentosPorMoneda.get(idMoneda) || []
+    const tieneDescuento = descuentosMoneda.includes(idDescuento)
+
+    console.log(`Verificando si moneda ${idMoneda} tiene descuento ${idDescuento}:`, tieneDescuento)
+    console.log(`Descuentos disponibles para moneda ${idMoneda}:`, descuentosMoneda)
+
+    return tieneDescuento
   }
 
-  // Obtener todos los descuentos disponibles para una moneda
   getDescuentosDisponibles(idMoneda: number): number[] {
-    const moneda = this.monedas.find((m) => m.idMoneda === idMoneda)
-    return moneda?.descuentos || []
+    // Usar el mapa para acceso persistente
+    const descuentosMoneda = this.descuentosPorMoneda.get(idMoneda) || []
+    console.log(`Obteniendo descuentos disponibles para moneda ${idMoneda}:`, descuentosMoneda)
+    return descuentosMoneda
   }
 
   updateMoneda(moneda: Moneda) {
     if (moneda.idMoneda != this.moneda()?.idMoneda) {
       // Asegurarse de que la moneda tenga sus descuentos asignados
-      const monedaCompleta = this.monedas.find((m) => m.idMoneda === moneda.idMoneda) || moneda
+      const monedaCompleta = { ...moneda }
+
+      // Asignar descuentos desde el mapa persistente
+      monedaCompleta.descuentos = this.descuentosPorMoneda.get(moneda.idMoneda) || []
 
       this.moneda.set(monedaCompleta)
 
@@ -187,11 +217,38 @@ export class MonedaService {
     return this.descuentos
   }
 
+  async getMetodosPago(): Promise<MetodoPago[]> {
+    if (this.metodosPago.length === 0) {
+      try {
+        // Obtener métodos de pago de Supabase
+        // Eliminar el filtro de activo ya que no existe esa columna
+        const metodosPagoData = await this.supabaseService.fetch("pagos")
+
+        console.log("Datos originales de métodos de pago:", metodosPagoData)
+
+        // Transformar los datos según la estructura real de la tabla pagos
+        this.metodosPago = metodosPagoData.map((mp: any) => ({
+          idPago: mp.id_pago,
+          tipoPago: mp.tipo_pago,
+          idMoneda: mp.id_moneda,
+          efectivo: mp.efectivo
+          // Eliminar la propiedad activo
+        }))
+      } catch (error) {
+        console.error("Error al obtener métodos de pago:", error)
+        return []
+      }
+    }
+    return this.metodosPago
+  }
+
   async getDescuentosPagos(): Promise<DescuentoPago[]> {
     if (this.descuentosPagos.length === 0) {
       try {
-        // Obtener relaciones de descuentos con métodos de pago y monedas
+        // Obtener relaciones de descuentos con métodos de pago
         const descuentosPagosData = await this.supabaseService.fetch("descuentos_pagos")
+
+        console.log("Datos originales de descuentos_pagos:", descuentosPagosData)
 
         // Transformar los datos
         this.descuentosPagos = descuentosPagosData.map((dp: any) => ({
@@ -207,5 +264,3 @@ export class MonedaService {
     return this.descuentosPagos
   }
 }
-
-// Importación circular - se resuelve con una declaración de tipo

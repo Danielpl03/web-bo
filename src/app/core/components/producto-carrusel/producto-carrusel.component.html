@@ -1,21 +1,58 @@
 <section class="carrusel-container" 
      (mouseenter)="stopAutoSlide()" 
      (mouseleave)="startAutoSlide()">
-  <h2>Productos Destacados</h2>
-  <div class="carrusel">
+  <h2>{{ titulo }}</h2>
+  
+  <div class="carrusel" *ngIf="productosCombinadosConTipo.length > 0">
     <button class="carrusel-control prev" (click)="prevSlide()" aria-label="Producto anterior">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
     </button>
-    <div class="carrusel-slide">
-      <img [src]="imagen()" [alt]="productos[currentIndex()].descripcion" (error)="handleImageError($event)" class="carrusel-image">
+    
+    <div class="carrusel-slide" *ngIf="productoActual()">
+      <!-- Banners dinámicos según el tipo de producto -->
+      <div class="producto-banner destacado" *ngIf="tipoProductoActual() === 'destacado'">Destacado</div>
+      <div class="producto-banner rebaja" *ngIf="tipoProductoActual() === 'rebajado'">{{ getPorcentajeRebaja() }}% Rebaja</div>
+      
+      <img [src]="imagen()" [alt]="productoActual()?.descripcion" (error)="handleImageError($event)" class="carrusel-image">
+      
       <div class="carrusel-content">
-          <p>{{ productos[currentIndex()].codigo }}</p>
-        <h3>{{ productos[currentIndex()].descripcion }}</h3>
-        <p class="precio">${{ precio() }}</p>
+        <p *ngIf="productoActual()?.codigo">{{ productoActual()?.codigo }}</p>
+        <h3>{{ productoActual()?.descripcion }}</h3>
+        
+        <div class="precio-container">
+          <!-- Mostrar precio original y descuento normal (si aplica) -->
+          <p *ngIf="tieneDescuentoNormal() && tipoProductoActual() !== 'rebajado'" class="precio-original">
+            <del>${{ productsService.getPrecio(false, productoActual()!) }}</del>
+            <span class="descuento">{{ getDescuentoPorcentaje() }}% Descuento</span>
+          </p>
+          
+          <!-- Mostrar precio anterior para productos rebajados -->
+          <p *ngIf="tipoProductoActual() === 'rebajado' && precioAnterior()" class="precio-original">
+            <del>${{ precioAnterior() }}</del>
+            <span class="descuento rebaja">{{ getPorcentajeRebaja() }}% Rebaja</span>
+          </p>
+          
+          <p class="precio" 
+             [ngClass]="{
+               'precio-destacado': tipoProductoActual() == 'destacado',
+               'precio-rebajado': tipoProductoActual() == 'rebajado'
+             }">
+            ${{ precio() }}
+          </p>
+        </div>
+        
+        <button class="btn-agregar-carrito" (click)="agregarAlCarrito()">
+          Añadir al carrito
+        </button>
       </div>
     </div>
+    
     <button class="carrusel-control next" (click)="nextSlide()" aria-label="Siguiente producto">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
     </button>
+  </div>
+  
+  <div *ngIf="productosCombinadosConTipo.length === 0" class="no-productos">
+    No hay productos disponibles para mostrar.
   </div>
 </section>

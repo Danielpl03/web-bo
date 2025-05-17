@@ -28,14 +28,17 @@ export class TarjetaProductoComponent {
   })
 
   tieneDescuentoActivo = computed(() => {
-    // const monedaId = this.carritoService.moneda()?.idMoneda || 1
-    // return this.productsService.productoTieneDescuento(this.producto, monedaId)
-    return this.producto.descuentos && this.producto.descuentos.length > 0
+    const monedaId = this.carritoService.moneda()?.idMoneda || 1
+    const tieneDescuento = this.productsService.productoTieneDescuento(this.producto, monedaId)
+    console.log(`Producto ${this.producto.idProducto} tiene descuento activo: ${tieneDescuento}`)
+    return tieneDescuento
   })
 
   porcentajeDescuento = computed(() => {
     const valorDescuento = this.productsService.getValorDescuento(this.producto)
-    return valorDescuento ? Math.round(valorDescuento * 100) : 0
+    const porcentaje = valorDescuento ? Math.round(valorDescuento * 100) : 0
+    console.log(`Porcentaje de descuento para producto ${this.producto.idProducto}: ${porcentaje}%`)
+    return porcentaje
   })
 
   @Input({ required: true }) producto!: Producto
@@ -45,10 +48,8 @@ export class TarjetaProductoComponent {
   productsService = inject(ProductosService)
 
   getImage() {
-    
-      const image = this.producto.image_name;
-      return IMAGES_PRODUCTOS + image!.replaceAll("&", "_")
-
+      const image = this.producto.image_name!
+      return IMAGES_PRODUCTOS + image
   }
 
   fullDescription() {
@@ -75,7 +76,7 @@ export class TarjetaProductoComponent {
 
   informacion() {
     const mensaje = `
-Hola, quisiera más información acerca de ${this.fullDescription()}. Muchas gracias!
+Hola!, quisiera más información acerca de ${this.fullDescription()}. Muchas gracias!
 `
     const link = `${WSP_LINK}?text=${encodeURI(mensaje)}`
     window.open(link, "_blank")

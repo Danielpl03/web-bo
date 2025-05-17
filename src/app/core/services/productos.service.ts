@@ -21,8 +21,279 @@ export class ProductosService {
   parseName(descripcion: string, codigo?: string): string {
     let finalDesc = codigo ? (descripcion + " -" + codigo) : descripcion; 
     const caracteres = '<>:\"/\\|?*\'';
-    finalDesc = finalDesc.split('').map(c => caracteres.includes(c) ? '&' : c).join('');
+    finalDesc = finalDesc.split('').map(c => caracteres.includes(c) ? '_' : c).join('');
     return finalDesc.replace(/ /g, '_');
+  }
+
+  // Método para obtener productos con etiqueta específica
+  async getProductosPorEtiqueta(idEtiqueta: number): Promise<Producto[]> {
+    try {
+      // Obtener productos con la etiqueta especificada
+      const etiquetasProductosData = await this.supabaseService.fetch("etiquetas_productos", {
+        filters: [{ column: "id_etiqueta", operator: "eq", value: idEtiqueta }],
+      })
+
+      if (etiquetasProductosData.length === 0) {
+        return []
+      }
+
+      const productosIds = etiquetasProductosData.map((ep: any) => ep.id_producto)
+
+      const productosData = await this.supabaseService.fetch("productos", {
+        filters: [
+          { column: "id_producto", operator: "in", value: productosIds },
+          { column: "activo", operator: "eq", value: true },
+        ],
+      })
+
+      // Obtener información adicional para estos productos
+      const [preciosData, descuentosProductosData, stocksData] = await Promise.all([
+        this.supabaseService.fetch("precios", {
+          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
+        }),
+        this.supabaseService.fetch("descuentos_productos", {
+          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
+        }),
+        this.supabaseService.fetch("stocks", {
+          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
+        }),
+      ])
+
+      // Obtener descuentos
+      const descuentosIds = descuentosProductosData.map((d: any) => d.id_descuento)
+      const descuentosData = await this.supabaseService.fetch("descuentos", {
+        filters: [{ column: "id_descuento", operator: "in", value: descuentosIds }],
+      })
+
+      // Transformar productos con toda la información relacionada
+      return productosData.map((p: any) => {
+        // Obtener precios para este producto
+        const precios = preciosData
+          .filter((precio: any) => precio.id_producto === p.id_producto)
+          .map((precio: any) => ({
+            idPrecio: precio.id_precio,
+            idProducto: precio.id_producto,
+            idMoneda: precio.id_moneda,
+            precio: precio.precio,
+          }))
+
+        // Obtener descuentos para este producto
+        const descuentosProducto = descuentosProductosData
+          .filter((dp: any) => dp.id_producto === p.id_producto)
+          .map((dp: any) => {
+            const descuento = descuentosData.find((d: any) => d.id_descuento === dp.id_descuento)
+            if (descuento) {
+              return {
+                idDescuento: descuento.id_descuento,
+                color: descuento.color,
+                valor: descuento.valor,
+                nombre: descuento.nombre,
+                activo: descuento.activo,
+              }
+            }
+            return null
+          })
+          .filter((d): d is { idDescuento: any; color: any; valor: any; nombre: any; activo: any } => d !== null)
+
+        // Obtener etiquetas para este producto
+        const etiquetasProducto = etiquetasProductosData
+          .filter((ep: any) => ep.id_producto === p.id_producto)
+          .map((ep: any) => ({
+            idRelacion: ep.id_relacion,
+            idEtiqueta: ep.id_etiqueta,
+            idProducto: ep.id_producto,
+            valor: ep.valor,
+          }))
+
+        // Obtener stocks para este producto
+        const stocks = stocksData
+          .filter((s: any) => s.id_producto === p.id_producto)
+          .reduce((acc: number[], s: any) => {
+            acc[s.id_localidad] = s.stock
+            return acc
+          }, [])
+
+        // Construir objeto producto completo
+        return {
+          idProducto: p.id_producto,
+          idDepartamento: p.id_departamento,
+          codigo: p.codigo,
+          descripcion: p.descripcion,
+          image_name: this.parseName(p.descripcion, p.codigo), // Nombre de imagen predeterminado
+          ipv: p.ipv,
+          activo: p.activo,
+          combo: p.combo,
+          precio: precios[0], // Primer precio como precio principal
+          precios: precios,
+          idCategoria: p.id_categoria,
+          descuentos: descuentosProducto.length > 0 ? descuentosProducto : undefined,
+          etiquetasProductos: etiquetasProducto,
+          stocks: stocks.length > 0 ? stocks : undefined,
+        }
+      })
+    } catch (error) {
+      console.error(`Error al obtener productos con etiqueta ${idEtiqueta}:`, error)
+      return []
+    }
+  }
+
+  // Método para obtener productos destacados (etiqueta id 3)
+  async getProductosDestacados(): Promise<Producto[]> {
+    return this.getProductosPorEtiqueta(3)
+  }
+
+  // Añadir método para obtener productos con rebaja
+  async getProductosRebajados(): Promise<Producto[]> {
+    try {
+      // Obtener productos con etiqueta "Rebaja" (id 2)
+      const etiquetasProductosData = await this.supabaseService.fetch("etiquetas_productos", {
+        filters: [{ column: "id_etiqueta", operator: "eq", value: 2 }], // Etiqueta "Rebaja"
+      })
+
+      if (etiquetasProductosData.length === 0) {
+        return []
+      }
+
+      const productosIds = etiquetasProductosData.map((ep: any) => ep.id_producto)
+
+      const productosData = await this.supabaseService.fetch("productos", {
+        filters: [
+          { column: "id_producto", operator: "in", value: productosIds },
+          { column: "activo", operator: "eq", value: true },
+        ],
+      })
+
+      // Obtener información adicional para estos productos
+      const [preciosData, descuentosProductosData, stocksData] = await Promise.all([
+        this.supabaseService.fetch("precios", {
+          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
+        }),
+        this.supabaseService.fetch("descuentos_productos", {
+          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
+        }),
+        this.supabaseService.fetch("stocks", {
+          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
+        }),
+      ])
+
+      // Obtener descuentos
+      const descuentosIds = descuentosProductosData.map((d: any) => d.id_descuento)
+      const descuentosData = await this.supabaseService.fetch("descuentos", {
+        filters: [{ column: "id_descuento", operator: "in", value: descuentosIds }],
+      })
+
+      // Transformar productos con toda la información relacionada
+      return productosData.map((p: any) => {
+        // Obtener precios para este producto
+        const precios = preciosData
+          .filter((precio: any) => precio.id_producto === p.id_producto)
+          .map((precio: any) => ({
+            idPrecio: precio.id_precio,
+            idProducto: precio.id_producto,
+            idMoneda: precio.id_moneda,
+            precio: precio.precio,
+          }))
+
+        // Obtener descuentos para este producto
+        const descuentosProducto = descuentosProductosData
+          .filter((dp: any) => dp.id_producto === p.id_producto)
+          .map((dp: any) => {
+            const descuento = descuentosData.find((d: any) => d.id_descuento === dp.id_descuento)
+            if (descuento) {
+              return {
+                idDescuento: descuento.id_descuento,
+                color: descuento.color,
+                valor: descuento.valor,
+                nombre: descuento.nombre,
+                activo: descuento.activo,
+              }
+            }
+            return null
+          })
+          .filter((d): d is { idDescuento: any; color: any; valor: any; nombre: any; activo: any } => d !== null)
+
+        // Obtener etiquetas para este producto (ya sabemos que tiene la etiqueta "Rebaja")
+        const etiquetasProducto = etiquetasProductosData
+          .filter((ep: any) => ep.id_producto === p.id_producto)
+          .map((ep: any) => ({
+            idRelacion: ep.id_relacion,
+            idEtiqueta: ep.id_etiqueta,
+            idProducto: ep.id_producto,
+            valor: ep.valor,
+          }))
+
+        // Obtener stocks para este producto
+        const stocks = stocksData
+          .filter((s: any) => s.id_producto === p.id_producto)
+          .reduce((acc: number[], s: any) => {
+            acc[s.id_localidad] = s.stock
+            return acc
+          }, [])
+
+        // Construir objeto producto completo
+        return {
+          idProducto: p.id_producto,
+          idDepartamento: p.id_departamento,
+          codigo: p.codigo,
+          descripcion: p.descripcion,
+          image_name: this.parseName(p.descripcion, p.codigo), // Nombre de imagen predeterminado
+          ipv: p.ipv,
+          activo: p.activo,
+          combo: p.combo,
+          precio: precios[0], // Primer precio como precio principal
+          precios: precios,
+          idCategoria: p.id_categoria,
+          descuentos: descuentosProducto.length > 0 ? descuentosProducto : undefined,
+          etiquetasProductos: etiquetasProducto,
+          stocks: stocks.length > 0 ? stocks : undefined,
+        }
+      })
+    } catch (error) {
+      console.error("Error al obtener productos rebajados:", error)
+      return []
+    }
+  }
+
+  // Método para obtener el precio anterior de un producto con rebaja
+  getPrecioAnterior(producto: Producto): number | null {
+    if (!producto.etiquetasProductos) return null
+
+    // Buscar la etiqueta de rebaja (id 2)
+    const etiquetaRebaja = producto.etiquetasProductos.find((et) => et.idEtiqueta === 2)
+    if (!etiquetaRebaja) return null
+
+    // El valor de la etiqueta contiene el precio anterior
+    const precioAnterior = Number.parseFloat(etiquetaRebaja.valor)
+    if (isNaN(precioAnterior)) return null
+
+    // Convertir el precio anterior a la moneda actual si es necesario
+    const currentMonedaId = this.moneda()?.idMoneda || 1
+
+    // Si el precio está en la misma moneda, devolverlo directamente
+    if (producto.precio && producto.precio.idMoneda === currentMonedaId) {
+      return precioAnterior
+    }
+
+    // Si necesitamos convertir el precio
+    if (producto.precio) {
+      if (producto.precio.idMoneda === 1 && currentMonedaId === 2) {
+        // Convertir de CUP a USD
+        const taza = this.monedaService.getTazaCambio(2) || 370
+        return Math.round((precioAnterior / taza) * 10) / 10
+      } else if (producto.precio.idMoneda === 2 && currentMonedaId === 1) {
+        // Convertir de USD a CUP
+        const taza = this.monedaService.getTazaCambio(2) || 370
+        return Math.round(precioAnterior * taza * 10) / 10
+      }
+    }
+
+    return precioAnterior
+  }
+
+  // Método para verificar si un producto tiene la etiqueta específica
+  tieneEtiqueta(producto: Producto, idEtiqueta: number): boolean {
+    if (!producto.etiquetasProductos) return false
+    return producto.etiquetasProductos.some((et) => et.idEtiqueta === idEtiqueta)
   }
 
   async getAll(): Promise<Producto[]> {
@@ -419,7 +690,7 @@ export class ProductosService {
       // Obtener productos que coincidan con el texto de búsqueda
       const productosData = await this.supabaseService.fetchAll("productos", {
         filters: [{ column: "activo", operator: "eq", value: true }],
-      })  
+      })
 
       // Filtrar productos basados en el texto de búsqueda
       const productosFiltrados = productosData.filter((producto: any) => {
@@ -545,241 +816,30 @@ export class ProductosService {
     }
   }
 
-  async getProductosNuevos(): Promise<Producto[]> {
-    try {
-      // Obtener productos nuevos de Supabase
-      // Esto asume que tienes una forma de identificar productos nuevos,
-      // como una etiqueta "Nuevo" o por fecha de creación
-      const etiquetasProductosData = await this.supabaseService.fetch("etiquetas_productos", {
-        filters: [{ column: "id_etiqueta", operator: "eq", value: 1 }], // Etiqueta "Nuevo"
-      })
-
-      if (etiquetasProductosData.length === 0) {
-        return []
-      }
-
-      const productosIds = etiquetasProductosData.map((ep: any) => ep.id_producto)
-
-      const productosData = await this.supabaseService.fetch("productos", {
-        filters: [
-          { column: "id_producto", operator: "in", value: productosIds },
-          { column: "activo", operator: "eq", value: true },
-        ],
-      })
-
-      // Obtener información adicional para estos productos
-      const [preciosData, descuentosProductosData, stocksData] = await Promise.all([
-        this.supabaseService.fetch("precios", {
-          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
-        }),
-        this.supabaseService.fetch("descuentos_productos", {
-          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
-        }),
-        this.supabaseService.fetch("stocks", {
-          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
-        }),
-      ])
-
-      // Obtener descuentos
-      const descuentosIds = descuentosProductosData.map((d: any) => d.id_descuento)
-      const descuentosData = await this.supabaseService.fetch("descuentos", {
-        filters: [{ column: "id_descuento", operator: "in", value: descuentosIds }],
-      })
-
-      // Transformar productos con toda la información relacionada
-      return productosData.map((p: any) => {
-        // Obtener precios para este producto
-        const precios = preciosData
-          .filter((precio: any) => precio.id_producto === p.id_producto)
-          .map((precio: any) => ({
-            idPrecio: precio.id_precio,
-            idProducto: precio.id_producto,
-            idMoneda: precio.id_moneda,
-            precio: precio.precio,
-          }))
-
-        // Obtener descuentos para este producto
-        const descuentosProducto = descuentosProductosData
-          .filter((dp: any) => dp.id_producto === p.id_producto)
-          .map((dp: any) => {
-            const descuento = descuentosData.find((d: any) => d.id_descuento === dp.id_descuento)
-            if (descuento) {
-              return {
-                idDescuento: descuento.id_descuento,
-                color: descuento.color,
-                valor: descuento.valor,
-                nombre: descuento.nombre,
-                activo: descuento.activo,
-              }
-            }
-            return null
-          })
-          .filter((d): d is { idDescuento: any; color: any; valor: any; nombre: any; activo: any } => d !== null)
-
-        // Obtener etiquetas para este producto (ya sabemos que tiene la etiqueta "Nuevo")
-        const etiquetasProducto = etiquetasProductosData
-          .filter((ep: any) => ep.id_producto === p.id_producto)
-          .map((ep: any) => ({
-            idRelacion: ep.id_relacion,
-            idEtiqueta: ep.id_etiqueta,
-            idProducto: ep.id_producto,
-            valor: ep.valor,
-          }))
-
-        // Obtener stocks para este producto
-        const stocks = stocksData
-          .filter((s: any) => s.id_producto === p.id_producto)
-          .reduce((acc: number[], s: any) => {
-            acc[s.id_localidad] = s.stock
-            return acc
-          }, [])
-
-        // Construir objeto producto completo
-        return {
-          idProducto: p.id_producto,
-          idDepartamento: p.id_departamento,
-          codigo: p.codigo,
-          descripcion: p.descripcion,
-          image_name: this.parseName(p.descripcion, p.codigo), // Nombre de imagen predeterminado
-          ipv: p.ipv,
-          activo: p.activo,
-          combo: p.combo,
-          precio: precios[0], // Primer precio como precio principal
-          precios: precios,
-          idCategoria: p.id_categoria,
-          descuentos: descuentosProducto.length > 0 ? descuentosProducto : undefined,
-          etiquetasProductos: etiquetasProducto,
-          stocks: stocks.length > 0 ? stocks : undefined,
-        }
-      })
-    } catch (error) {
-      console.error("Error al obtener productos nuevos:", error)
-      return []
-    }
-  }
-
-  async getProductosDestacados(): Promise<Producto[]> {
-    try {
-      // Obtener productos destacados de Supabase
-      // Esto asume que tienes una forma de identificar productos destacados,
-      // como una etiqueta "Destacado"
-      const etiquetasProductosData = await this.supabaseService.fetch("etiquetas_productos", {
-        filters: [{ column: "id_etiqueta", operator: "eq", value: 3 }], // Etiqueta "Destacado"
-      })
-
-      if (etiquetasProductosData.length === 0) {
-        return []
-      }
-
-      const productosIds = etiquetasProductosData.map((ep: any) => ep.id_producto)
-
-      const productosData = await this.supabaseService.fetch("productos", {
-        filters: [
-          { column: "id_producto", operator: "in", value: productosIds },
-          { column: "activo", operator: "eq", value: true },
-        ],
-      })
-
-      // Obtener información adicional para estos productos
-      const [preciosData, descuentosProductosData, stocksData] = await Promise.all([
-        this.supabaseService.fetch("precios", {
-          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
-        }),
-        this.supabaseService.fetch("descuentos_productos", {
-          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
-        }),
-        this.supabaseService.fetch("stocks", {
-          filters: [{ column: "id_producto", operator: "in", value: productosIds }],
-        }),
-      ])
-
-      // Obtener descuentos
-      const descuentosIds = descuentosProductosData.map((d: any) => d.id_descuento)
-      const descuentosData = await this.supabaseService.fetch("descuentos", {
-        filters: [{ column: "id_descuento", operator: "in", value: descuentosIds }],
-      })
-
-      // Transformar productos con toda la información relacionada
-      return productosData.map((p: any) => {
-        // Obtener precios para este producto
-        const precios = preciosData
-          .filter((precio: any) => precio.id_producto === p.id_producto)
-          .map((precio: any) => ({
-            idPrecio: precio.id_precio,
-            idProducto: precio.id_producto,
-            idMoneda: precio.id_moneda,
-            precio: precio.precio,
-          }))
-
-        // Obtener descuentos para este producto
-        const descuentosProducto = descuentosProductosData
-          .filter((dp: any) => dp.id_producto === p.id_producto)
-          .map((dp: any) => {
-            const descuento = descuentosData.find((d: any) => d.id_descuento === dp.id_descuento)
-            if (descuento) {
-              return {
-                idDescuento: descuento.id_descuento,
-                color: descuento.color,
-                valor: descuento.valor,
-                nombre: descuento.nombre,
-                activo: descuento.activo,
-              }
-            }
-            return null
-          })
-          .filter((d): d is { idDescuento: any; color: any; valor: any; nombre: any; activo: any } => d !== null)
-
-        // Obtener etiquetas para este producto (ya sabemos que tiene la etiqueta "Destacado")
-        const etiquetasProducto = etiquetasProductosData
-          .filter((ep: any) => ep.id_producto === p.id_producto)
-          .map((ep: any) => ({
-            idRelacion: ep.id_relacion,
-            idEtiqueta: ep.id_etiqueta,
-            idProducto: ep.id_producto,
-            valor: ep.valor,
-          }))
-
-        // Obtener stocks para este producto
-        const stocks = stocksData
-          .filter((s: any) => s.id_producto === p.id_producto)
-          .reduce((acc: number[], s: any) => {
-            acc[s.id_localidad] = s.stock
-            return acc
-          }, [])
-
-        // Construir objeto producto completo
-        return {
-          idProducto: p.id_producto,
-          idDepartamento: p.id_departamento,
-          codigo: p.codigo,
-          descripcion: p.descripcion,
-          image_name: this.parseName(p.descripcion, p.codigo), // Nombre de imagen predeterminado
-          ipv: p.ipv,
-          activo: p.activo,
-          combo: p.combo,
-          precio: precios[0], // Primer precio como precio principal
-          precios: precios,
-          idCategoria: p.id_categoria,
-          descuentos: descuentosProducto.length > 0 ? descuentosProducto : undefined,
-          etiquetasProductos: etiquetasProducto,
-          stocks: stocks.length > 0 ? stocks : undefined,
-        }
-      })
-    } catch (error) {
-      console.error("Error al obtener productos destacados:", error)
-      return []
-    }
-  }
-
-  // Método mejorado para verificar si un producto tiene descuento en la moneda actual
+  // Método para verificar si un producto tiene descuento en la moneda actual
   productoTieneDescuento(producto: Producto, idMoneda: number): boolean {
     if (!producto.descuentos || producto.descuentos.length === 0) {
       return false
     }
 
+    // Obtener descuentos disponibles para la moneda
+    const descuentosDisponibles = this.monedaService.getDescuentosDisponibles(idMoneda)
+    console.log(`Descuentos disponibles para moneda ${idMoneda}:`, descuentosDisponibles)
+    console.log(
+      `Descuentos del producto ${producto.idProducto}:`,
+      producto.descuentos.map((d) => d.idDescuento),
+    )
+
+    if (descuentosDisponibles.length === 0) {
+      return false
+    }
+
     // Verificar si alguno de los descuentos del producto está disponible para la moneda
     for (const descuento of producto.descuentos) {
-      if (this.monedaService.tieneDescuento(idMoneda, descuento.idDescuento)) {
+      if (descuentosDisponibles.includes(descuento.idDescuento)) {
+        console.log(
+          `Producto ${producto.idProducto} tiene descuento ${descuento.idDescuento} disponible para moneda ${idMoneda}`,
+        )
         return true
       }
     }
@@ -789,27 +849,35 @@ export class ProductosService {
 
   // Método para obtener el descuento aplicable a un producto en una moneda específica
   getDescuentoAplicable(producto: Producto, idMoneda: number) {
-
     if (!producto.descuentos || producto.descuentos.length === 0) {
       return null
     }
-    return producto.descuentos[0];
-    
 
     // Obtener descuentos disponibles para la moneda
-    // const descuentosDisponibles = this.monedaService.getDescuentosDisponibles(idMoneda)
+    const descuentosDisponibles = this.monedaService.getDescuentosDisponibles(idMoneda)
+    console.log(`Buscando descuento aplicable para producto ${producto.idProducto} en moneda ${idMoneda}`)
+    console.log(`Descuentos disponibles:`, descuentosDisponibles)
+    console.log(
+      `Descuentos del producto:`,
+      producto.descuentos.map((d) => d.idDescuento),
+    )
 
-    // // Buscar el primer descuento del producto que esté disponible para la moneda
-    // for (const descuento of producto.descuentos) {
-    //   if (descuentosDisponibles.includes(descuento.idDescuento)) {
-    //     return descuento
-    //   }
-    // }
+    if (descuentosDisponibles.length === 0) {
+      return null
+    }
 
-    // return null
+    // Buscar el primer descuento del producto que esté disponible para la moneda
+    for (const descuento of producto.descuentos) {
+      if (descuentosDisponibles.includes(descuento.idDescuento)) {
+        console.log(`Descuento aplicable encontrado:`, descuento)
+        return descuento
+      }
+    }
+
+    return null
   }
 
-  // Método mejorado para obtener el precio con o sin descuento
+  // Mejorar el método para obtener el precio con descuento
   getPrecio(aplicarDescuento: boolean, producto: Producto): number {
     // Obtener el precio base en la moneda actual
     const currentMonedaId = this.moneda()?.idMoneda || 1
@@ -842,22 +910,24 @@ export class ProductosService {
     }
 
     // Aplicar descuento si corresponde
+    let precioFinal = precioBase
     if (aplicarDescuento) {
       const descuento = this.getDescuentoAplicable(producto, currentMonedaId)
       if (descuento) {
-        precioBase = precioBase * (1 - descuento.valor)
+        precioFinal = precioBase * (1 - descuento.valor)
+        console.log(`Aplicando descuento ${descuento.valor * 100}% al producto ${producto.idProducto}:`)
+        console.log(`Precio base: ${precioBase}, Precio con descuento: ${precioFinal}`)
       }
     }
 
     // Redondear a 1 decimal
-    return Math.round(precioBase * 10) / 10
+    return Math.round(precioFinal * 10) / 10
   }
 
   // Método para obtener el valor del descuento aplicable
   getValorDescuento(producto: Producto): number | null {
-    // const currentMonedaId = this.moneda()?.idMoneda || 1
-    // const descuento = this.getDescuentoAplicable(producto, currentMonedaId)
-    // return descuento ? descuento.valor : null
-    return producto.descuentos![0].valor;
+    const currentMonedaId = this.moneda()?.idMoneda || 1
+    const descuento = this.getDescuentoAplicable(producto, currentMonedaId)
+    return descuento ? descuento.valor : null
   }
 }

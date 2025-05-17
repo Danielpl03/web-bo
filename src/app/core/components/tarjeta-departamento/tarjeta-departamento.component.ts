@@ -31,12 +31,7 @@ export class TarjetaDepartamentoComponent implements OnInit {
   }
 
   getImage() {
-    if (this.departamento.image_name) {
-      const image = this.departamento.image_name.replaceAll(" ", "_").split(".")[0]
-
-      return this.url + image.replaceAll("&", "_")
-    }
-
-    return "/descargar.jpg"
+      const image = this.departamento.image_name!
+      return this.url + image
   }
 }
