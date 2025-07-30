@@ -10,7 +10,7 @@ import {
 } from "@angular/core"
 import type { Producto } from "../../interfaces/producto"
 import { interval, type Subscription } from "rxjs"
-import { IMAGES_PRODUCTOS } from "../../constants"
+import { IMAGES_SUPABASE } from "../../constants"
 import { CarritoService } from "../../services/carrito.service"
 import { ProductosService } from "../../services/productos.service"
 import { CommonModule } from "@angular/common"
@@ -161,7 +161,7 @@ export class ProductoCarruselComponent implements OnInit, OnDestroy {
     if (!prod) return "/descargar.jpg"
 
       const image = prod.image_name!
-      return IMAGES_PRODUCTOS + image
+      return IMAGES_SUPABASE + image
   })
 
   // Precio anterior para productos rebajados

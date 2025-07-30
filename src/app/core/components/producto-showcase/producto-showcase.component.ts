@@ -2,7 +2,7 @@ import { Component, Input, OnInit, WritableSignal, computed } from '@angular/cor
 import { Moneda, Producto } from '../../interfaces/producto';
 import { CarritoService } from '../../services/carrito.service';
 import { CommonModule } from '@angular/common';
-import { IMAGES_PRODUCTOS } from '../../constants';
+import { IMAGES_SUPABASE } from '../../constants';
 import { TarjetaProductoComponent } from "../tarjeta-producto/tarjeta-producto.component";
 
 @Component({
@@ -18,7 +18,7 @@ export class ProductoShowcaseComponent implements OnInit{
   @Input() productos: Producto[] = [];
   isExpanded: boolean = false;
   monedaActual = computed( () => this.carritoService.moneda() );
-  url: string = IMAGES_PRODUCTOS;
+  url: string = IMAGES_SUPABASE;
 
   constructor(
     private carritoService: CarritoService,

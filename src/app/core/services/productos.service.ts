@@ -20,9 +20,9 @@ export class ProductosService {
 
   parseName(descripcion: string, codigo?: string): string {
     let finalDesc = codigo ? (descripcion + " -" + codigo) : descripcion; 
-    const caracteres = '<>:\"/\\|?*\'';
+    const caracteres = '<>:\"/\\|?*ñÑ&¨´´';
     finalDesc = finalDesc.split('').map(c => caracteres.includes(c) ? '_' : c).join('');
-    return finalDesc.replace(/ /g, '_');
+    return finalDesc.replace(/ /g, '_').toUpperCase();
   }
 
   // Método para obtener productos con etiqueta específica
@@ -798,7 +798,7 @@ export class ProductosService {
           idDepartamento: p.id_departamento,
           codigo: p.codigo,
           descripcion: p.descripcion,
-          image_name: this.parseName(p.descripcion, p.codigo), // Nombre de imagen predeterminado
+          image_name: this.parseName(p.descripcion, p.codigo) , // Nombre de imagen predeterminado
           ipv: p.ipv,
           activo: p.activo,
           combo: p.combo,

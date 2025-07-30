@@ -1,17 +1,16 @@
 import { Component, Input, computed, inject } from "@angular/core"
 import type { Producto } from "../../interfaces/producto"
 import { CommonModule } from "@angular/common"
-import { IMAGES_PRODUCTOS, WSP_LINK } from "../../constants"
+import { IMAGES_PRODUCTOS, IMAGES_SUPABASE, WSP_LINK } from "../../constants"
 import { CarritoService } from "../../services/carrito.service"
 import Swal from "sweetalert2"
 import { ProductosService } from "../../services/productos.service"
-import { ElegirMonedaComponent } from "../elegir-moneda/elegir-moneda.component"
-import { ProductoShowcaseComponent } from "../producto-showcase/producto-showcase.component"
+
 
 @Component({
   selector: "app-tarjeta-producto",
   standalone: true,
-  imports: [CommonModule, ElegirMonedaComponent, ProductoShowcaseComponent],
+  imports: [CommonModule],
   templateUrl: "./tarjeta-producto.component.html",
   styleUrl: "./tarjeta-producto.component.css",
 })
@@ -43,13 +42,13 @@ export class TarjetaProductoComponent {
 
   @Input({ required: true }) producto!: Producto
   localidades: number[] = [102, 103, 105]
-  url: string = IMAGES_PRODUCTOS
+  url: string = IMAGES_SUPABASE
   carritoService = inject(CarritoService)
   productsService = inject(ProductosService)
 
   getImage() {
       const image = this.producto.image_name!
-      return IMAGES_PRODUCTOS + image
+      return this.url + image
   }
 
   fullDescription() {

@@ -1,4 +1,5 @@
 export const IMAGES_PRODUCTOS = 'https://ik.imagekit.io/MLSOLUCIONES/';
+export const IMAGES_SUPABASE = 'https://xymgsntzhkygkbutltty.supabase.co/storage/v1/object/public/mlsoluciones/';
 export const IMAGES_DEPARTAMENTOS = 'https://ik.imagekit.io/MLSOLUCIONES/';
 export const IMAGES_CATEGORIAS = '';
 export const WSP_LINK = 'https://wa.me/+5356736163';
