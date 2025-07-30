@@ -14,9 +14,9 @@ export class CategoriasService {
 
   parseName(descripcion: string, codigo?: string): string {
     let finalDesc = codigo ? (descripcion + " -" + codigo) : descripcion; 
-    const caracteres = '<>:\"/\\|?*\'';
+    const caracteres = '<>:\"/\\|?*ñÑ&¨´´';
     finalDesc = finalDesc.split('').map(c => caracteres.includes(c) ? '_' : c).join('');
-    return finalDesc.replace(/ /g, '_');
+    return finalDesc.replace(/ /g, '_').toUpperCase();
   }
 
   async getAll(): Promise<Categoria[]> {
